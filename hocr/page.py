@@ -1,9 +1,9 @@
-import re
+import re, six
 
 
 class Box:
 
-    def __init__(self, text=None, *, left=0, right=0, top=0, bottom=0):
+    def __init__(self, text=None, left=0, right=0, top=0, bottom=0):
 
         # Parse the text string representation if given.
         if text is not None:
@@ -27,7 +27,7 @@ class Box:
             self.left, self.top, self.right, self.bottom)
 
 
-class Base:
+class Base(object):
 
     _allowed_ocr_classes = {}
 
@@ -46,7 +46,11 @@ class Base:
         # Parse the properties of the HOCR element.
         properties = element.get('title', '').split(';')
         for prop in properties:
-            name, value = prop.split(maxsplit=1)
+            if six.PY3:
+                name, value = prop.split(maxsplit=1)
+            else:
+                name, value = prop.split(' ',1)
+            
             if name == 'bbox':
                 self.box = Box(value)
 
@@ -54,7 +58,12 @@ class Base:
                 self.image = value.strip('" ')
 
     def __dir__(self):
-        return super().__dir__() + list(self._allowed_ocr_classes)
+        
+        if six.PY3:
+            return super().__dir__() + list(self._allowed_ocr_classes)
+        else:
+            return super(Base, self).__dir__() + list(self._allowed_ocr_classes)
+            
 
     def __getattr__(self, name):
         # Return the cached version if present.
@@ -78,8 +87,11 @@ class Word(Base):
 
     def __init__(self, element):
         # Initialize the base.
-        super().__init__(element)
-
+        if six.PY3:
+            super().__init__(element)
+        else:
+            super(Word, self).__init__(element)
+            
         # Discover if we are "bold".
         # A word element is bold if its text node is wrapped in a <strong/>.
         self.bold = bool(element.find('strong'))
