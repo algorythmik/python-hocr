@@ -1,4 +1,5 @@
-import re, six
+import re
+import six
 
 
 class Box(object):
@@ -46,11 +47,13 @@ class Base(object):
         # Parse the properties of the HOCR element.
         properties = element.get('title', '').split(';')
         for prop in properties:
+            prop = prop.strip()
+
             if six.PY3:
                 name, value = prop.split(maxsplit=1)
             else:
-                name, value = prop.split(' ',1)
-            
+                name, value = prop.split(' ', 1)
+
             if name == 'bbox':
                 self.box = Box(value)
 
@@ -58,12 +61,12 @@ class Base(object):
                 self.image = value.strip('" ')
 
     def __dir__(self):
-        
+
         if six.PY3:
             return super().__dir__() + list(self._allowed_ocr_classes)
         else:
-            return super(Base, self).__dir__() + list(self._allowed_ocr_classes)
-            
+            return super(
+                Base, self).__dir__() + list(self._allowed_ocr_classes)
 
     def __getattr__(self, name):
         # Return the cached version if present.
@@ -91,7 +94,7 @@ class Word(Base):
             super().__init__(element)
         else:
             super(Word, self).__init__(element)
-            
+
         # Discover if we are "bold".
         # A word element is bold if its text node is wrapped in a <strong/>.
         self.bold = bool(element.find('strong'))
