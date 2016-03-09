@@ -12,6 +12,7 @@ You can call it whatever you like, I'm just using python-hocr_env as an example.
 
 2. Activate that virtual env, either with the `workon` command (if virtualenvwrapper is installed) or directly by typing something like: `$ source python-hocr_env/bin/activate`
 3. Get the raw code with `$ git clone https://github.com/jsfenfen/python-hocr.git`
+
 4. Install the requirements by using `pip install -r requirements_dev.txt`
 
 
