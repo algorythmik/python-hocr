@@ -106,6 +106,8 @@ class Word(Base):
         # Find the text node.
         self.text = element.text
 
+        self.lang = element.get("lang",'')
+
     def __str__(self):
         return '<Word(%r, %r)>' % (self.text, self.box)
 

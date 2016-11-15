@@ -8,7 +8,7 @@ from hocr.parser import parse
 
 debug = True
 
-fieldnames = ['pageid', 'page_dim', 'text', 'object_type', 'height', 'width', 'x0', 'x1', 'y0', 'y1']
+fieldnames = ['pageid', 'page_dim', 'text', 'object_type', 'height', 'width', 'x0', 'x1', 'y0', 'y1', 'lang']
 
 
 # shared with coalesce words, prob
@@ -53,7 +53,8 @@ def get_page_words(parsed_hocr_page, pageid):
             'text':word.text, 'width':word.box.width,
             'height':word.box.height, 'pageid':pageid,
             'page_dim':page_dim_string,
-            'object_type':'word'
+            'object_type':'word',
+            'lang':word.lang,
         }
         page_words.append(this_word)
         
