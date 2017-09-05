@@ -31,13 +31,13 @@ class Box(object):
 class Base(object):
 
     _allowed_ocr_classes = {}
+    _dir_methods = []
 
-    def __init__(self, element):
+    def __init__(self, element):  # noqa
         """
         @param[in] element
             XML node for the OCR element.
         """
-
         # Store the element for later reference.
         self._element = element
 
@@ -60,11 +60,32 @@ class Base(object):
             elif name == 'image':
                 self.image = value.strip('" ')
 
+            elif name == 'x_wconf':
+                self.wconf = int(value)
+
+            elif name == 'textangle':
+                self.textangle = int(value)
+                if value == '90':
+                    self.vertical = True
+
+            elif name == 'x_size':
+                self.size = value
+
+            elif name == 'x_ascenders':
+                self.ascenders = float(value)
+
+            elif name == 'x_descenders':
+                self.descenders = float(value)
+
+            elif name == 'ppageno':
+                self.ppageno = int(value)
+
     def __dir__(self):
 
         if six.PY3:
             return super().__dir__() + list(self._allowed_ocr_classes)
         else:
+            return list(self._allowed_ocr_classes) + getattr(self, '_dir_methods', [])
             return super(
                 Base, self).__dir__() + list(self._allowed_ocr_classes)
 
@@ -87,6 +108,7 @@ class Base(object):
 class Word(Base):
 
     _allowed_ocr_classes = {}
+    _dir_methods = ['box', 'bold', 'italic', 'lang', 'wconf']
 
     def __init__(self, element):
         # Initialize the base.
@@ -106,7 +128,7 @@ class Word(Base):
         # Find the text node.
         self.text = element.text
 
-        self.lang = element.get("lang",'')
+        self.lang = element.get("lang", '')
 
     def __str__(self):
         return '<Word(%r, %r)>' % (self.text, self.box)
@@ -114,6 +136,13 @@ class Word(Base):
 
 class Line(Base):
     _allowed_ocr_classes = {'words'}
+    _dir_methods = ['box', 'text', 'vertical', 'textangle']
+    vertical = False
+    textangle = 0
+
+    @property
+    def text(self):
+        return ' '.join([w.text for w in self.words])
 
 
 class Paragraph(Base):
@@ -122,10 +151,12 @@ class Paragraph(Base):
 
 class Block(Base):
     _allowed_ocr_classes = {'paragraphs', 'lines', 'words'}
+    _dir_methods = ['box', ]
 
 
 class Page(Base):
     _allowed_ocr_classes = {'blocks', 'paragraphs', 'lines', 'words'}
+    _dir_methods = ['image', ]
 
 
 OCR_CLASSES = {
