@@ -9,6 +9,7 @@
 *.pyc
 *.pyo
 *.egg-info
+hocr.egg-info
 
 # Git files
 *.orig
