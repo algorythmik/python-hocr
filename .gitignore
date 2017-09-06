@@ -10,6 +10,8 @@
 *.pyo
 *.egg-info
 hocr.egg-info
+dist/
+build/
 
 # Git files
 *.orig
