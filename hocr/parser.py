@@ -18,10 +18,10 @@ def parse(source):
 
     else:
         content = source.read()
-    
+
     # Parse the HOCR xml stream.
     ud = UnicodeDammit(content, is_html=True)
-        
+
     # will take a while for a 500 page document
     soup = BeautifulSoup(ud.unicode_markup, 'lxml')
 

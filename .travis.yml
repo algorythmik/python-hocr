@@ -1,0 +1,14 @@
+language: python
+python:
+- 3.5
+cache:
+  apt: true
+  pip: true
+before_install:
+- pip install --upgrade pip setuptools
+install:
+- pip install -e .[dev]
+- pip install pytest pytest-cov flake8 python-coveralls
+script:
+- flake8 exclue=build
+- py.test --cov hocr --cov-report term-missing

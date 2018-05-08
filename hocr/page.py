@@ -85,7 +85,8 @@ class Base(object):
         if six.PY3:
             return super().__dir__() + list(self._allowed_ocr_classes)
         else:
-            return list(self._allowed_ocr_classes) + getattr(self, '_dir_methods', [])
+            return list(
+                self._allowed_ocr_classes) + getattr(self, '_dir_methods', [])
             return super(
                 Base, self).__dir__() + list(self._allowed_ocr_classes)
 
