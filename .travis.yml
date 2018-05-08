@@ -10,5 +10,5 @@ install:
 - pip install -e .[dev]
 - pip install pytest pytest-cov flake8 python-coveralls
 script:
-- flake8
+- flake8 exclude=build
 - py.test --cov hocr --cov-report term-missing
