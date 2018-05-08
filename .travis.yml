@@ -8,7 +8,7 @@ before_install:
 - pip install --upgrade pip setuptools
 install:
 - pip install -e .[dev]
-- pip install pytest pytest-cov flake8 python-coveralls
+- pip install pytest pytest-cov flake8
 script:
-- flake8 exclue=build
+- flake8 --exclude build
 - py.test --cov hocr --cov-report term-missing
