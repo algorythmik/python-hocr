@@ -1,4 +1,4 @@
-import hocr
+import hocr.parser
 from os import path
 from pytest import raises
 
@@ -6,12 +6,12 @@ BASE_DIR = path.dirname(__file__)
 
 
 def parse(filename='example.html'):
-    return hocr.parse(path.join(BASE_DIR, filename))
+    return hocr.parser.parse(path.join(BASE_DIR, filename))
 
 
 def test_parse_from_stream():
     with open(path.join(BASE_DIR, 'example.html'), 'rb') as stream:
-        pages = hocr.parse(stream)
+        pages = hocr.parser.parse(stream)
 
         assert len(pages) == len(parse('example.html'))
 
@@ -22,22 +22,7 @@ def test_get_number_of_pages():
 
 def test_parse_return_datastructure_is_pages():
     for item in parse():
-        assert isinstance(item, hocr.Page)
-
-
-# def test_page_has_page_number():
-#     pages = parse()
-
-#     for item in pages:
-#         assert hasattr(item, 'index')
-#         assert item.index >= 0
-
-
-# def test_page_has_unique_page_number():
-#     pages = parse()
-#     numbers = {x.index for x in pages}
-
-#     assert len(pages) == len(numbers)
+        assert isinstance(item, hocr.page.Page)
 
 
 def test_page_elements_in_dir():
