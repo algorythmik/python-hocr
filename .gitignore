@@ -9,7 +9,7 @@
 *.pyc
 *.pyo
 *.egg-info
-hocr.egg-info
+pyhocr.egg-info
 dist/
 build/
 
