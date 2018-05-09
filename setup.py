@@ -17,7 +17,7 @@ setup(
     description=meta.__description__,
     author='Vic.ai',
     author_email='rune@vic.ai',
-    url='http://github.com/loyning/python-24so/',
+    url='https://github.com/algorythmik/python-hocr/',
     keywords='hocr',
     classifiers=[],
     packages=find_packages(),
