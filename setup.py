@@ -11,7 +11,7 @@ from pkgutil import get_importer
 meta = get_importer('hocr').find_module('__init__').load_module('__init__')
 
 setup(
-    name="hocr",
+    name="pyhocr",
     version=meta.__version__,
     description=meta.__description__,
     author='Vic.ai',
