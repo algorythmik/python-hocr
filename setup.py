@@ -9,10 +9,11 @@ from distutils.core import setup
 from pkgutil import get_importer
 
 meta = get_importer('pyhocr').find_module('__init__').load_module('__init__')
+__version__ = '0.2.12'
 
 setup(
     name="pyhocr",
-    version=meta.__version__,
+    version=__version__,
     description=meta.__description__,
     author='Vic.ai',
     author_email='rune@vic.ai',
