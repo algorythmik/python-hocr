@@ -3,7 +3,7 @@ import csv
 import json
 import six
 
-from hocr.parser import parse
+from pyhocr.parser import parse
 
 debug = True
 
