@@ -23,6 +23,10 @@ class Box(object):
     def height(self):
         return self.bottom - self.top
 
+    @property
+    def bbox(self):
+        return (self.top, self.left, self.right, self.bottom)
+
     def __repr__(self):
         return '<Box(%r, %r, %r, %r)>' % (
             self.left, self.top, self.right, self.bottom)
@@ -130,6 +134,8 @@ class Word(Base):
         self.text = element.text
 
         self.lang = element.get("lang", '')
+        self.line = Line(self._element.find_parent(
+            class_=OCR_CLASSES['lines']['name']))
 
     def __str__(self):
         return '<Word(%r, %r)>' % (self.text, self.box)
@@ -140,6 +146,14 @@ class Line(Base):
     _dir_methods = ['box', 'text', 'vertical', 'textangle']
     vertical = False
     textangle = 0
+
+    def __init__(self, element):
+        if six.PY3:
+            super().__init__(element)
+        else:
+            super(Word, self).__init__(element)
+        self.block = Block(self._element.find_parent(
+            class_=OCR_CLASSES['blocks']['name']))
 
     @property
     def text(self):
@@ -154,6 +168,14 @@ class Block(Base):
     _allowed_ocr_classes = {'paragraphs', 'lines', 'words'}
     _dir_methods = ['box', ]
 
+    def __init__(self, element):
+        if six.PY3:
+            super().__init__(element)
+        else:
+            super(Word, self).__init__(element)
+        self.page = Page(self._element.find_parent(
+            class_=OCR_CLASSES['pages']['name']))
+
 
 class Page(Base):
     _allowed_ocr_classes = {'blocks', 'paragraphs', 'lines', 'words'}
@@ -164,5 +186,6 @@ OCR_CLASSES = {
     'words': {'name': 'ocr.?_word', 'class': Word},
     'lines': {'name': 'ocr_line', 'class': Line},
     'paragraphs': {'name': 'ocr_par', 'class': Paragraph},
-    'blocks': {'name': 'ocr_carea', 'class': Block}
+    'blocks': {'name': 'ocr_carea', 'class': Block},
+    'pages': {'name': 'ocr_page', 'class': Page}
 }
