@@ -102,6 +102,12 @@ class TestBlock:
 
 class TestWord:
 
+    def test_word_parents_in_dir(self):
+        word = parse()[0].words[0]
+        parents = ['page', 'block', 'paragraph', 'line']
+        dir_ = dir(word)
+        assert all([attr in dir_ for attr in parents])
+
     def test_words_have_text(self):
         page = parse()[0]
 
