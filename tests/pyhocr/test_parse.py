@@ -44,15 +44,15 @@ class TestPage:
 
     def test_page_has_bounding_box(self):
         for page in parse():
-            assert page.box.left >= 0
+            assert page.bbox.left >= 0
 
     def test_page_bounding_box_has_correct_value(self):
         page = parse()[0]
 
-        assert page.box.left == 0
-        assert page.box.top == 0
-        assert page.box.right == 5100
-        assert page.box.bottom == 6600
+        assert page.bbox.left == 0
+        assert page.bbox.top == 0
+        assert page.bbox.right == 5100
+        assert page.bbox.bottom == 6600
 
     def test_page_has_image_name(self):
         page = parse()[0]
@@ -125,19 +125,28 @@ class TestWord:
     def test_words_have_bounding_box(self):
         page = parse()[0]
 
-        assert page.words[0].box.left == 2216
-        assert page.words[0].box.top == 1049
-        assert page.words[0].box.right == 2449
-        assert page.words[0].box.bottom == 1098
+        assert page.words[0].bbox.left == 2216
+        assert page.words[0].bbox.top == 1049
+        assert page.words[0].bbox.right == 2449
+        assert page.words[0].bbox.bottom == 1098
 
     def test_word_has_line(self):
         page = parse()[0]
         for word in page.words:
             assert isinstance(word.line, pyhocr.page.Line)
 
+    def test_word_has_block(self):
+        page = parse()[0]
+        for word in page.words:
+            assert isinstance(word.block, pyhocr.page.Block)
+
+    def test_word_has_page(self):
+        page = parse()[0]
+        for word in page.words:
+            assert isinstance(word.page, pyhocr.page.Page)
+
 
 class TestLines:
-
     def test_line_has_block(self):
         page = parse()[0]
         for line in page.lines:

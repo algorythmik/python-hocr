@@ -2,7 +2,7 @@ import re
 import six
 
 
-class Box(object):
+class BBox(object):
 
     def __init__(self, text=None, left=0, right=0, top=0, bottom=0):
 
@@ -24,7 +24,7 @@ class Box(object):
         return self.bottom - self.top
 
     @property
-    def bbox(self):
+    def coords(self):
         return (self.top, self.left, self.right, self.bottom)
 
     def __repr__(self):
@@ -33,8 +33,10 @@ class Box(object):
 
 
 class Base(object):
+    _hierarchy = ['pages', 'blocks', 'paragraphs', 'lines', 'words']
 
     _allowed_ocr_classes = {}
+    _allowed_ocr_parents = {}
     _dir_methods = []
 
     def __init__(self, element):  # noqa
@@ -59,7 +61,7 @@ class Base(object):
                 name, value = prop.split(' ', 1)
 
             if name == 'bbox':
-                self.box = Box(value)
+                self.bbox = BBox(value)
 
             elif name == 'image':
                 self.image = value.strip('" ')
@@ -106,14 +108,20 @@ class Base(object):
             self._cache[name] = elements = list(map(ref['class'], nodes))
             return elements
 
+        if name + 's' in self._allowed_ocr_parents:
+            name = name + 's'
+            ref = OCR_CLASSES[name]
+            node = self._element.find_parent(class_=ref['name'])
+            self._cache[name] = element = ref['class'](node)
+            return element
+
         # Attribute is not present.
         raise AttributeError(name)
 
 
 class Word(Base):
 
-    _allowed_ocr_classes = {}
-    _dir_methods = ['box', 'bold', 'italic', 'lang', 'wconf']
+    _dir_methods = ['bbox', 'bold', 'italic', 'lang', 'wconf']
 
     def __init__(self, element):
         # Initialize the base.
@@ -121,7 +129,8 @@ class Word(Base):
             super().__init__(element)
         else:
             super(Word, self).__init__(element)
-
+        self._allowed_ocr_classes = self._hierarchy[5:]
+        self._allowed_ocr_parents = self._hierarchy[:4]
         # Discover if we are "bold".
         # A word element is bold if its text node is wrapped in a <strong/>.
         self.bold = bool(element.find('strong'))
@@ -134,16 +143,16 @@ class Word(Base):
         self.text = element.text
 
         self.lang = element.get("lang", '')
-        self.line = Line(self._element.find_parent(
-            class_=OCR_CLASSES['lines']['name']))
+        # self.line = Line(self._element.find_parent(
+        #     class_=OCR_CLASSES['lines']['name']))
 
     def __str__(self):
         return '<Word(%r, %r)>' % (self.text, self.box)
 
 
 class Line(Base):
-    _allowed_ocr_classes = {'words'}
-    _dir_methods = ['box', 'text', 'vertical', 'textangle']
+
+    _dir_methods = ['bbox', 'text', 'vertical', 'textangle']
     vertical = False
     textangle = 0
 
@@ -151,9 +160,9 @@ class Line(Base):
         if six.PY3:
             super().__init__(element)
         else:
-            super(Word, self).__init__(element)
-        self.block = Block(self._element.find_parent(
-            class_=OCR_CLASSES['blocks']['name']))
+            super(Line, self).__init__(element)
+        self._allowed_ocr_classes = self._hierarchy[4:]
+        self._allowed_ocr_parents = self._hierarchy[:3]
 
     @property
     def text(self):
@@ -162,23 +171,32 @@ class Line(Base):
 
 class Paragraph(Base):
     _allowed_ocr_classes = {'lines', 'words'}
+    _allowed_ocr_parents = {'pages', 'blocks'}
 
 
 class Block(Base):
-    _allowed_ocr_classes = {'paragraphs', 'lines', 'words'}
-    _dir_methods = ['box', ]
+
+    _dir_methods = ['bbox', ]
 
     def __init__(self, element):
         if six.PY3:
             super().__init__(element)
         else:
             super(Word, self).__init__(element)
-        self.page = Page(self._element.find_parent(
-            class_=OCR_CLASSES['pages']['name']))
+        self._allowed_ocr_classes = self._hierarchy[2:]
+        self._allowed_ocr_parents = self._hierarchy[:1]
 
 
 class Page(Base):
-    _allowed_ocr_classes = {'blocks', 'paragraphs', 'lines', 'words'}
+
+    def __init__(self, element):
+        if six.PY3:
+            super().__init__(element)
+        else:
+            super(Page, self).__init__(element)
+        self._allowed_ocr_classes = self._hierarchy[1:]
+        self._allowed_ocr_parents = self._hierarchy[:0]
+
     _dir_methods = ['image', ]
 
 
