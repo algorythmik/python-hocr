@@ -175,7 +175,7 @@ class Paragraph(Base):
         if six.PY3:
             super().__init__(element)
         else:
-            super(Word, self).__init__(element)
+            super(Paragraph, self).__init__(element)
         self._allowed_childs = self._allowed_childs[3:]
         self._allowed_parents = self._allowed_parents[:2]
 
@@ -188,7 +188,7 @@ class Block(Base):
         if six.PY3:
             super().__init__(element)
         else:
-            super(Word, self).__init__(element)
+            super(Block, self).__init__(element)
         self._allowed_childs = self._allowed_childs[2:]
         self._allowed_parents = self._allowed_parents[:1]
 
@@ -211,5 +211,5 @@ OCR_CLASSES = {
     'lines': {'name': 'ocr_line', 'class': Line},
     'paragraphs': {'name': 'ocr_par', 'class': Paragraph},
     'blocks': {'name': 'ocr_carea', 'class': Block},
-    'pages': {'name': 'ocr_page', 'class': Page}
+    'pages': {'name': 'ocr_page', 'class': Page},
 }
