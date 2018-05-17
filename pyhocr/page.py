@@ -35,8 +35,6 @@ class BBox(object):
 class Base(object):
     _hierarchy = ['pages', 'blocks', 'paragraphs', 'lines', 'words']
 
-    _allowed_ocr_classes = {}
-    _allowed_ocr_parents = {}
     _dir_methods = []
 
     def __init__(self, element):  # noqa
@@ -92,9 +90,9 @@ class Base(object):
             return super().__dir__() + list(self._allowed_ocr_classes)
         else:
             return list(
-                self._allowed_ocr_classes) + getattr(self, '_dir_methods', [])
+                self._allowed_ocr_childs) + getattr(self, '_dir_methods', [])
             return super(
-                Base, self).__dir__() + list(self._allowed_ocr_classes)
+                Base, self).__dir__() + list(self._allowed_ocr_childs)
 
     def __getattr__(self, name):
         # Return the cached version if present.
@@ -102,7 +100,7 @@ class Base(object):
             return self._cache[name]
 
         # Parse the named OCR elements.
-        if name in self._allowed_ocr_classes:
+        if name in self._allowed_ocr_childs:
             ref = OCR_CLASSES[name]
             nodes = self._element.find_all(class_=re.compile(ref['name']))
             self._cache[name] = elements = list(map(ref['class'], nodes))
@@ -129,7 +127,7 @@ class Word(Base):
             super().__init__(element)
         else:
             super(Word, self).__init__(element)
-        self._allowed_ocr_classes = self._hierarchy[5:]
+        self._allowed_ocr_childs = self._hierarchy[5:]
         self._allowed_ocr_parents = self._hierarchy[:4]
         # Discover if we are "bold".
         # A word element is bold if its text node is wrapped in a <strong/>.
@@ -143,8 +141,6 @@ class Word(Base):
         self.text = element.text
 
         self.lang = element.get("lang", '')
-        # self.line = Line(self._element.find_parent(
-        #     class_=OCR_CLASSES['lines']['name']))
 
     def __str__(self):
         return '<Word(%r, %r)>' % (self.text, self.box)
@@ -161,7 +157,7 @@ class Line(Base):
             super().__init__(element)
         else:
             super(Line, self).__init__(element)
-        self._allowed_ocr_classes = self._hierarchy[4:]
+        self._allowed_ocr_childs = self._hierarchy[4:]
         self._allowed_ocr_parents = self._hierarchy[:3]
 
     @property
@@ -170,7 +166,7 @@ class Line(Base):
 
 
 class Paragraph(Base):
-    _allowed_ocr_classes = {'lines', 'words'}
+    _allowed_ocr_childs = {'lines', 'words'}
     _allowed_ocr_parents = {'pages', 'blocks'}
 
 
@@ -183,7 +179,7 @@ class Block(Base):
             super().__init__(element)
         else:
             super(Word, self).__init__(element)
-        self._allowed_ocr_classes = self._hierarchy[2:]
+        self._allowed_ocr_childs = self._hierarchy[2:]
         self._allowed_ocr_parents = self._hierarchy[:1]
 
 
@@ -194,7 +190,7 @@ class Page(Base):
             super().__init__(element)
         else:
             super(Page, self).__init__(element)
-        self._allowed_ocr_classes = self._hierarchy[1:]
+        self._allowed_ocr_childs = self._hierarchy[1:]
         self._allowed_ocr_parents = self._hierarchy[:0]
 
     _dir_methods = ['image', ]
