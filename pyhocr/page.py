@@ -1,4 +1,5 @@
 import re
+
 import six
 
 
@@ -33,6 +34,7 @@ class BBox(object):
 
 
 class Base(object):
+
     _hierarchy = ['pages', 'blocks', 'paragraphs', 'lines', 'words']
 
     _dir_methods = []
@@ -87,7 +89,7 @@ class Base(object):
     def __dir__(self):
 
         if six.PY3:
-            return super().__dir__() + list(self._allowed_ocr_classes)
+            return super().__dir__() + list(self._allowed_ocr_childs)
         else:
             return list(
                 self._allowed_ocr_childs) + getattr(self, '_dir_methods', [])
@@ -166,8 +168,15 @@ class Line(Base):
 
 
 class Paragraph(Base):
-    _allowed_ocr_childs = {'lines', 'words'}
-    _allowed_ocr_parents = {'pages', 'blocks'}
+    _dir_methods = ['bbox', ]
+
+    def __init__(self, element):
+        if six.PY3:
+            super().__init__(element)
+        else:
+            super(Word, self).__init__(element)
+        self._allowed_ocr_childs = self._hierarchy[3:]
+        self._allowed_ocr_parents = self._hierarchy[:2]
 
 
 class Block(Base):
