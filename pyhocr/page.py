@@ -90,9 +90,9 @@ class Base(object):
     def __dir__(self):
 
         if six.PY3:
-            super_dir = super().__dir__()
+            super_dir = dir(super())
         else:
-            super_dir = super(Base, self).__dir__()
+            super_dir = dir(super(Base, self))
 
         return super_dir + self._allowed_childs +\
             self._allowed_parents + getattr(self, '_dir_methods', [])
