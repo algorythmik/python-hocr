@@ -39,7 +39,7 @@ class Base(object):
 
     _dir_methods = []
 
-    def __init__(self, element):  # noqa
+    def __init__(self, element):
         """
         @param[in] element
             XML node for the OCR element.
