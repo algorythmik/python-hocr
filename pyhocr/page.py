@@ -110,13 +110,13 @@ class Base(object):
 
         # Parse the named OCR elements.
         if name in self._allowed_childs:
+            name = name.rstrip('s')
             ref = OCR_CLASSES[name]
             nodes = self._element.find_all(class_=re.compile(ref['name']))
             self._cache[name] = elements = list(map(ref['class'], nodes))
             return elements
 
         if name in self._allowed_parents:
-            name = name + 's'
             ref = OCR_CLASSES[name]
             node = self._element.find_parent(class_=ref['name'])
             self._cache[name] = element = ref['class'](node)
@@ -203,9 +203,9 @@ class Page(Base):
 
 
 OCR_CLASSES = {
-    'words': {'name': 'ocr.?_word', 'class': Word},
-    'lines': {'name': 'ocr_line', 'class': Line},
-    'paragraphs': {'name': 'ocr_par', 'class': Paragraph},
-    'blocks': {'name': 'ocr_carea', 'class': Block},
-    'pages': {'name': 'ocr_page', 'class': Page},
+    'word': {'name': 'ocr.?_word', 'class': Word},
+    'line': {'name': 'ocr_line', 'class': Line},
+    'paragraph': {'name': 'ocr_par', 'class': Paragraph},
+    'block': {'name': 'ocr_carea', 'class': Block},
+    'page': {'name': 'ocr_page', 'class': Page},
 }
