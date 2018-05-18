@@ -1,50 +1,42 @@
-# python-hocr
+# pyhocr
 
-HOCR conversion to csv based on [https://github.com/concordusapps/python-hocr](https://github.com/concordusapps/python-hocr).
+pyhocr is a package to help you pull date out of hocr files.
+(This parser is based on [https://github.com/concordusapps/python-hocr](https://github.com/concordusapps/python-hocr).)
 
 ## Installation
 
-This has been lightly tested on python 2.7 and 3.5, but is still pretty rough. You'll need to install it on your own, though that shouldn't be too hard. 
+To install the module, run:
 
-1. Make a new [virtualenv](https://virtualenv.readthedocs.org/en/latest/) for the code to live in by typing something like:
-`$ virtualenv python-hocr_env`
-You can call it whatever you like, I'm just using python-hocr_env as an example.
+`pip install pyhocr`
 
-2. Activate that virtual env, either with the `workon` command (if virtualenvwrapper is installed) or directly by typing something like: `$ source python-hocr_env/bin/activate`
-3. Get the raw code with `$ git clone https://github.com/jsfenfen/python-hocr.git`
+## Usage
+pyhocr parses the following elements from hocr:
+- ocr pages: represented by `<ocr_page>`,
+- ocr content areas: represented by `<ocr_carea`
+- ocr paragraphs: represented by `<ocr_par>`
+- ocr lines: represented by `<ocr_lines>`
+- ocr words: represented by `<ocr_?words`
 
-4. Install the requirements by using `pip install -r requirements_dev.txt`
+and  returns them  as `Page`, `Blocks`, `Paragraphs`, `Lines`, and `Words` objects respectively.
 
+You can navigate through the hocr by asking for any children elements or any parent element. You can navigate down the strucure like:
+```
+import pyhocr.parser
+filepath = 'example.hocr'
+page = pyhocr.parser.parse(stream)[0]
+# pulling all lines out:
+lines = page.lines
+# getting text of last line
+last_line_text = lines[-1].text
+# getting all words of page
+words = page.words
+```
 
-## convert_hocr.py
-
-Convert hOCR files to .csv or .json format.
-Assumes that each hOCR file has only one closing `</html>` tag; some hOCR outputs mangle html by giving each pages an opening and closing html tag (as opposed to just an opening and closing ocr_page tag). This script will only convert the content that appears before the first html closing tag in such files; it's recommended that you pre-process such files ahead of time. 
-	
-	$ python convert_hocr.py  --help
-	usage: hocr2csv [-h] [--pages PAGES [PAGES ...]] [--format {csv,json}]
-	                infile outfile
-	
-	positional arguments:
-	  infile
-	  outfile
-	
-	optional arguments:
-	  -h, --help            show this help message and exit
-	  --pages PAGES [PAGES ...]
-	  --format {csv,json}
-
-examples:
-
-	python convert_hocr.py infile.html --pages=1-4 infile.csv
-
-page ranges are inclusive. 
-
-	python convert_hocr.py infile.html --format=json infile.json
-
-
-## License
-
-Unless otherwise noted, all files contained within this project are liensed under the MIT opensource license. See the included file LICENSE or visit [opensource.org][] for more information.
-
-[opensource.org]: http://opensource.org/licenses/MIT
+Or navigate up the data structre by:
+```
+word = page.words[0]
+# get parent page
+page = word.page
+# get parent line:
+line = word.line
+```
