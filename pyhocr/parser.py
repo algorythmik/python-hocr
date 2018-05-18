@@ -3,8 +3,6 @@ import re
 from bs4 import UnicodeDammit, BeautifulSoup
 from .page import Page
 
-kill_html_closing_tags = re.compile(r'\<\/\s*html', re.I)
-
 
 def parse(source):
     """Parse a HOCR stream into page elements.
