@@ -34,9 +34,12 @@ words = page.words
 
 Or navigate up the data structre by:
 ```
-word = page.words[0]
 # get parent page
 page = word.page
 # get parent line:
 line = word.line
+# get parent block
+line = word.block
+# get parent page of the block
+page = block.page
 ```
