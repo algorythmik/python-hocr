@@ -1,6 +1,6 @@
 import six
-import re
-from bs4 import UnicodeDammit, BeautifulSoup
+from bs4 import BeautifulSoup, UnicodeDammit
+
 from .page import Page
 
 

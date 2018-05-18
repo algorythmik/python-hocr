@@ -51,6 +51,12 @@ class Base(object):
         # Create an element cache.
         self._cache = {}
 
+        name = self.__class__.__name__.lower()
+        self._allowed_childs = self._allowed_childs[
+            self._allowed_childs.index(name + 's') + 1:]
+        self._allowed_parents = self._allowed_parents[
+            :self._allowed_parents.index(name)]
+
         # Parse the properties of the HOCR element.
         properties = element.get('title', '').split(';')
         for prop in properties:
@@ -130,8 +136,6 @@ class Word(Base):
             super().__init__(element)
         else:
             super(Word, self).__init__(element)
-        self._allowed_childs = self._allowed_childs[5:]
-        self._allowed_parents = self._allowed_parents[:4]
         # Discover if we are "bold".
         # A word element is bold if its text node is wrapped in a <strong/>.
         self.bold = bool(element.find('strong'))
@@ -160,8 +164,6 @@ class Line(Base):
             super().__init__(element)
         else:
             super(Line, self).__init__(element)
-        self._allowed_childs = self._allowed_childs[4:]
-        self._allowed_parents = self._allowed_parents[:3]
 
     @property
     def text(self):
@@ -176,8 +178,6 @@ class Paragraph(Base):
             super().__init__(element)
         else:
             super(Paragraph, self).__init__(element)
-        self._allowed_childs = self._allowed_childs[3:]
-        self._allowed_parents = self._allowed_parents[:2]
 
 
 class Block(Base):
@@ -189,8 +189,6 @@ class Block(Base):
             super().__init__(element)
         else:
             super(Block, self).__init__(element)
-        self._allowed_childs = self._allowed_childs[2:]
-        self._allowed_parents = self._allowed_parents[:1]
 
 
 class Page(Base):
@@ -200,8 +198,6 @@ class Page(Base):
             super().__init__(element)
         else:
             super(Page, self).__init__(element)
-        self._allowed_childs = self._allowed_childs[1:]
-        self._allowed_parents = self._allowed_parents[:0]
 
     _dir_methods = ['image', ]
 
