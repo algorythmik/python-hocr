@@ -1,8 +1,9 @@
 import re
+
 import six
 
 
-class Box(object):
+class BBox(object):
 
     def __init__(self, text=None, left=0, right=0, top=0, bottom=0):
 
@@ -23,6 +24,10 @@ class Box(object):
     def height(self):
         return self.bottom - self.top
 
+    @property
+    def coords(self):
+        return (self.top, self.left, self.right, self.bottom)
+
     def __repr__(self):
         return '<Box(%r, %r, %r, %r)>' % (
             self.left, self.top, self.right, self.bottom)
@@ -30,10 +35,12 @@ class Box(object):
 
 class Base(object):
 
-    _allowed_ocr_classes = {}
+    _allowed_childs = ['pages', 'blocks', 'paragraphs', 'lines', 'words']
+    _allowed_parents = ['page', 'block', 'paragraph', 'line', 'word']
+
     _dir_methods = []
 
-    def __init__(self, element):  # noqa
+    def __init__(self, element):
         """
         @param[in] element
             XML node for the OCR element.
@@ -43,6 +50,12 @@ class Base(object):
 
         # Create an element cache.
         self._cache = {}
+
+        name = self.__class__.__name__.lower()
+        self._allowed_childs = self._allowed_childs[
+            self._allowed_childs.index(name + 's') + 1:]
+        self._allowed_parents = self._allowed_parents[
+            :self._allowed_parents.index(name)]
 
         # Parse the properties of the HOCR element.
         properties = element.get('title', '').split(';')
@@ -55,7 +68,7 @@ class Base(object):
                 name, value = prop.split(' ', 1)
 
             if name == 'bbox':
-                self.box = Box(value)
+                self.bbox = BBox(value)
 
             elif name == 'image':
                 self.image = value.strip('" ')
@@ -83,12 +96,12 @@ class Base(object):
     def __dir__(self):
 
         if six.PY3:
-            return super().__dir__() + list(self._allowed_ocr_classes)
+            super_dir = dir(super())
         else:
-            return list(
-                self._allowed_ocr_classes) + getattr(self, '_dir_methods', [])
-            return super(
-                Base, self).__dir__() + list(self._allowed_ocr_classes)
+            super_dir = dir(super(Base, self))
+
+        return super_dir + self._allowed_childs +\
+            self._allowed_parents + getattr(self, '_dir_methods', [])
 
     def __getattr__(self, name):
         # Return the cached version if present.
@@ -96,11 +109,18 @@ class Base(object):
             return self._cache[name]
 
         # Parse the named OCR elements.
-        if name in self._allowed_ocr_classes:
+        if name in self._allowed_childs:
+            name = name.rstrip('s')
             ref = OCR_CLASSES[name]
             nodes = self._element.find_all(class_=re.compile(ref['name']))
             self._cache[name] = elements = list(map(ref['class'], nodes))
             return elements
+
+        if name in self._allowed_parents:
+            ref = OCR_CLASSES[name]
+            node = self._element.find_parent(class_=ref['name'])
+            self._cache[name] = element = ref['class'](node)
+            return element
 
         # Attribute is not present.
         raise AttributeError(name)
@@ -108,8 +128,7 @@ class Base(object):
 
 class Word(Base):
 
-    _allowed_ocr_classes = {}
-    _dir_methods = ['box', 'bold', 'italic', 'lang', 'wconf']
+    _dir_methods = ['bbox', 'bold', 'italic', 'lang', 'wconf']
 
     def __init__(self, element):
         # Initialize the base.
@@ -117,7 +136,6 @@ class Word(Base):
             super().__init__(element)
         else:
             super(Word, self).__init__(element)
-
         # Discover if we are "bold".
         # A word element is bold if its text node is wrapped in a <strong/>.
         self.bold = bool(element.find('strong'))
@@ -136,10 +154,16 @@ class Word(Base):
 
 
 class Line(Base):
-    _allowed_ocr_classes = {'words'}
-    _dir_methods = ['box', 'text', 'vertical', 'textangle']
+
+    _dir_methods = ['bbox', 'text', 'vertical', 'textangle']
     vertical = False
     textangle = 0
+
+    def __init__(self, element):
+        if six.PY3:
+            super().__init__(element)
+        else:
+            super(Line, self).__init__(element)
 
     @property
     def text(self):
@@ -147,22 +171,41 @@ class Line(Base):
 
 
 class Paragraph(Base):
-    _allowed_ocr_classes = {'lines', 'words'}
+    _dir_methods = ['bbox', ]
+
+    def __init__(self, element):
+        if six.PY3:
+            super().__init__(element)
+        else:
+            super(Paragraph, self).__init__(element)
 
 
 class Block(Base):
-    _allowed_ocr_classes = {'paragraphs', 'lines', 'words'}
-    _dir_methods = ['box', ]
+
+    _dir_methods = ['bbox', ]
+
+    def __init__(self, element):
+        if six.PY3:
+            super().__init__(element)
+        else:
+            super(Block, self).__init__(element)
 
 
 class Page(Base):
-    _allowed_ocr_classes = {'blocks', 'paragraphs', 'lines', 'words'}
+
+    def __init__(self, element):
+        if six.PY3:
+            super().__init__(element)
+        else:
+            super(Page, self).__init__(element)
+
     _dir_methods = ['image', ]
 
 
 OCR_CLASSES = {
-    'words': {'name': 'ocr.?_word', 'class': Word},
-    'lines': {'name': 'ocr_line', 'class': Line},
-    'paragraphs': {'name': 'ocr_par', 'class': Paragraph},
-    'blocks': {'name': 'ocr_carea', 'class': Block}
+    'word': {'name': 'ocr.?_word', 'class': Word},
+    'line': {'name': 'ocr_line', 'class': Line},
+    'paragraph': {'name': 'ocr_par', 'class': Paragraph},
+    'block': {'name': 'ocr_carea', 'class': Block},
+    'page': {'name': 'ocr_page', 'class': Page},
 }

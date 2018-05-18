@@ -1,9 +1,7 @@
 import six
-import re
-from bs4 import UnicodeDammit, BeautifulSoup
-from .page import Page
+from bs4 import BeautifulSoup, UnicodeDammit
 
-kill_html_closing_tags = re.compile(r'\<\/\s*html', re.I)
+from .page import Page
 
 
 def parse(source):

@@ -1,6 +1,7 @@
 language: python
 python:
 - 3.5
+- 2.7
 cache:
   apt: true
   pip: true
@@ -14,6 +15,8 @@ script:
 - py.test --cov pyhocr --cov-report term-missing
 deploy:
   provider: pypi
+  on:
+    tags: true
   user: "mojtaba"
   distributions: bdist_wheel
   edge:
