@@ -1,7 +1,6 @@
 # pyhocr
 
-pyhocr is a package to help you pull date out of hocr files.
-(This parser is based on [https://github.com/concordusapps/python-hocr](https://github.com/concordusapps/python-hocr).)
+pyhocr is a package to help you pull data out of hocr files.
 
 ## Installation
 
@@ -15,12 +14,12 @@ pyhocr parses the following elements from hocr:
 - ocr content areas: represented by `<ocr_carea`
 - ocr paragraphs: represented by `<ocr_par>`
 - ocr lines: represented by `<ocr_lines>`
-- ocr words: represented by `<ocr_?words`
+- ocr words: represented by `<ocr?_words`
 
 and  returns them  as `Page`, `Blocks`, `Paragraphs`, `Lines`, and `Words` objects respectively.
 
 You can navigate through the hocr by asking for any children elements or any parent element. You can navigate down the strucure like:
-```
+```python
 import pyhocr.parser
 filepath = 'example.hocr'
 page = pyhocr.parser.parse(stream)[0]
@@ -33,7 +32,7 @@ words = page.words
 ```
 
 Or navigate up the data structre by:
-```
+```python
 # get parent page
 page = word.page
 # get parent line:
