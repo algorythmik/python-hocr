@@ -150,7 +150,7 @@ class Word(Base):
         self.lang = element.get("lang", '')
 
     def __str__(self):
-        return '<Word(%r, %r)>' % (self.text, self.bbox)
+        return "<Word('{}', {})>".format(self.text, self.bbox)
 
 
 class Line(Base):
