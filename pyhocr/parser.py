@@ -11,7 +11,7 @@ def parse(source):
     """
     # Coerce the source into content.
     if isinstance(source, six.string_types):
-        with open(source, 'rb') as stream:
+        with open(source, 'r') as stream:
             content = stream.read()
 
     else:

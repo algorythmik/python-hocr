@@ -102,6 +102,10 @@ class TestBlock:
 
 class TestWord:
 
+    def test_word_reper(self):
+        word = parse()[0].words[0]
+        assert str(word) == "<Word('TABLE', <Box(2216, 1049, 2449, 1098)>)>"
+
     def test_word_parents_in_dir(self):
         word = parse()[0].words[0]
         parents = ['page', 'block', 'paragraph', 'line']
