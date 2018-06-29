@@ -2,21 +2,20 @@ from os import path
 
 from pytest import raises
 
-import pyhocr.page
-import pyhocr.parser
+import pyhocr
 
 BASE_DIR = path.dirname(__file__)
 
 
 def parse(filename='example.html'):
-    return pyhocr.parser.parse(path.join(BASE_DIR, filename))
+    return pyhocr.parse(path.join(BASE_DIR, filename))
 
 
 class TestParse:
 
     def test_parse_from_stream(self):
         with open(path.join(BASE_DIR, 'example.html'), 'rb') as stream:
-            pages = pyhocr.parser.parse(stream)
+            pages = pyhocr.parse(stream)
 
             assert len(pages) == len(parse('example.html'))
 
