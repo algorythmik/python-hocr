@@ -1,30 +1,22 @@
-#
-# Copyright 2017 Vic.ai - Rune Loyning
-#
-# https://github.com/Vic-ai/python-hocr
-#
-
 from setuptools import find_packages
 from distutils.core import setup
-from pkgutil import get_importer
 
-meta = get_importer('pyhocr').find_module('__init__').load_module('__init__')
 __version__ = '1.1.1'
 
 setup(
-    name="pyhocr",
+    name='pyhocr',
     version=__version__,
-    description=meta.__description__,
-    author='Vic.ai',
-    author_email='rune@vic.ai',
+    description='Minimalistic library for parsing and navigating the hOCR',
+    author='Mojtaba',
+    author_email='smt.moji@gmail.com',
     url='https://github.com/algorythmik/python-hocr/',
-    keywords='hocr',
+    keywords='hocr parse',
     classifiers=[],
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
-        'beautifulsoup4',
-        'six',
-        'lxml'
+        'six>=1.11.0,<2.0.0',
+        'beautifulsoup4>=4.6.0,<5.0.0',
+        'lxml>=4.2.3,<5.0.0',
     ],
 )

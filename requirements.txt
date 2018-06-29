@@ -1,3 +1,0 @@
-six
-beautifulsoup4
-lxml

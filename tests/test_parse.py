@@ -2,8 +2,7 @@ from os import path
 
 import pytest
 
-import pyhocr.classes
-import pyhocr.parser
+import pyhocr
 
 BASE_DIR = path.dirname(__file__)
 
@@ -11,14 +10,14 @@ BASE_DIR = path.dirname(__file__)
 @pytest.fixture(scope='session')
 def example():
     filename = 'example.html'
-    return pyhocr.parser.parse(path.join(BASE_DIR, filename))
+    return pyhocr.parse(path.join(BASE_DIR, filename))
 
 
 class TestParse:
 
     def test_parse_from_stream(self, example):
         with open(path.join(BASE_DIR, 'example.html'), 'rb') as stream:
-            hocr = pyhocr.parser.parse(stream)
+            hocr = pyhocr.parse(stream)
 
             assert hocr == example
 
