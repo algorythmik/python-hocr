@@ -102,14 +102,6 @@ class Base(object):
             self._allowed_parents + getattr(self, '_dir_methods', [])
 
     def __getattr__(self, name):
-        soup_params = {
-            'document': {'name': 'html'},
-            'word': {'class_': 'ocrx_word'},
-            'line': {'class_': 'ocr_line'},
-            'paragraph': {'class_': 'ocr_par'},
-            'block': {'class_': 'ocr_carea'},
-            'page': {'class_': 'ocr_page'},
-        }
         classes = {
             'document': Document,
             'word': Word,
@@ -118,6 +110,7 @@ class Base(object):
             'block': Block,
             'page': Page,
         }
+        norm_name = name.rstrip('s')
 
         # Return the cached version if present.
         if name in self._cache:
@@ -125,14 +118,15 @@ class Base(object):
 
         # Parse the named OCR elements.
         if name in self._allowed_childs:
-            norm_name = name.rstrip('s')
-            nodes = self._element.find_all(**soup_params[norm_name])
-            self._cache[name] = elements = list(map(classes[norm_name], nodes))
+            class_ = classes[norm_name]
+            nodes = self._element.find_all(**class_.soup_params)
+            self._cache[name] = elements = list(map(class_, nodes))
             return elements
 
         if name in self._allowed_parents:
-            node = self._element.find_parent(**soup_params[name])
-            self._cache[name] = element = classes[name](node)
+            class_ = classes[norm_name]
+            node = self._element.find_parent(**class_.soup_params)
+            self._cache[name] = element = class_(node)
             return element
 
         # Attribute is not present.
@@ -143,6 +137,7 @@ class Base(object):
 
 
 class Document(Base):
+    soup_params = {'name': 'html'}
 
     def __init__(self, element):
         if six.PY3:
@@ -152,7 +147,7 @@ class Document(Base):
 
 
 class Word(Base):
-
+    soup_params = {'class_': 'ocrx_word'}
     _dir_methods = ['bbox', 'bold', 'italic', 'lang', 'wconf']
 
     def __init__(self, element):
@@ -179,7 +174,7 @@ class Word(Base):
 
 
 class Line(Base):
-
+    soup_params = {'class_': 'ocr_line'}
     _dir_methods = ['bbox', 'text', 'vertical', 'textangle']
     vertical = False
     textangle = 0
@@ -196,6 +191,7 @@ class Line(Base):
 
 
 class Paragraph(Base):
+    soup_params = {'class_': 'ocr_par'}
     _dir_methods = ['bbox', ]
 
     def __init__(self, element):
@@ -206,7 +202,7 @@ class Paragraph(Base):
 
 
 class Block(Base):
-
+    soup_params = {'class_': 'ocr_carea'}
     _dir_methods = ['bbox', ]
 
     def __init__(self, element):
@@ -217,6 +213,7 @@ class Block(Base):
 
 
 class Page(Base):
+    soup_params = {'class_': 'ocr_page'}
 
     def __init__(self, element):
         if six.PY3:
