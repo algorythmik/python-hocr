@@ -49,7 +49,7 @@ class Base(object):
 
         name = self.__class__.__name__.lower()
         self._allowed_childs = \
-            [name + 's' for name in
+            [child_name + 's' for child_name in
              self._tag_hierarchy[self._tag_hierarchy.index(name) + 1:]]
         self._allowed_parents = \
             self._tag_hierarchy[:self._tag_hierarchy.index(name)]
