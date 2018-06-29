@@ -1,5 +1,3 @@
-import re
-
 import six
 
 
@@ -26,7 +24,7 @@ class BBox(object):
 
     @property
     def coords(self):
-        return (self.top, self.left, self.right, self.bottom)
+        return self.top, self.left, self.right, self.bottom
 
     def __repr__(self):
         return '<Box(%r, %r, %r, %r)>' % (
@@ -35,30 +33,30 @@ class BBox(object):
 
 class Base(object):
 
-    _allowed_childs = ['pages', 'blocks', 'paragraphs', 'lines', 'words']
-    _allowed_parents = ['page', 'block', 'paragraph', 'line', 'word']
-
+    _tag_hierarchy = ['document', 'page', 'block', 'paragraph', 'line', 'word']
     _dir_methods = []
 
-    def __init__(self, element):
+    def __init__(self, soup_element):
         """
         @param[in] element
             XML node for the OCR element.
         """
         # Store the element for later reference.
-        self._element = element
+        self._element = soup_element
 
         # Create an element cache.
         self._cache = {}
 
         name = self.__class__.__name__.lower()
-        self._allowed_childs = self._allowed_childs[
-            self._allowed_childs.index(name + 's') + 1:]
-        self._allowed_parents = self._allowed_parents[
-            :self._allowed_parents.index(name)]
+        self._allowed_childs = \
+            [name + 's' for name in
+             self._tag_hierarchy[self._tag_hierarchy.index(name) + 1:]]
+        self._allowed_parents = \
+            self._tag_hierarchy[:self._tag_hierarchy.index(name)]
 
         # Parse the properties of the HOCR element.
-        properties = element.get('title', '').split(';')
+        properties_raw = soup_element.get('title')
+        properties = properties_raw.split(';') if properties_raw else []
         for prop in properties:
             prop = prop.strip()
 
@@ -104,26 +102,53 @@ class Base(object):
             self._allowed_parents + getattr(self, '_dir_methods', [])
 
     def __getattr__(self, name):
+        soup_params = {
+            'document': {'name': 'html'},
+            'word': {'class_': 'ocrx_word'},
+            'line': {'class_': 'ocr_line'},
+            'paragraph': {'class_': 'ocr_par'},
+            'block': {'class_': 'ocr_carea'},
+            'page': {'class_': 'ocr_page'},
+        }
+        classes = {
+            'document': Document,
+            'word': Word,
+            'line': Line,
+            'paragraph': Paragraph,
+            'block': Block,
+            'page': Page,
+        }
+
         # Return the cached version if present.
         if name in self._cache:
             return self._cache[name]
 
         # Parse the named OCR elements.
         if name in self._allowed_childs:
-            name = name.rstrip('s')
-            ref = OCR_CLASSES[name]
-            nodes = self._element.find_all(class_=re.compile(ref['name']))
-            self._cache[name] = elements = list(map(ref['class'], nodes))
+            norm_name = name.rstrip('s')
+            nodes = self._element.find_all(**soup_params[norm_name])
+            self._cache[name] = elements = list(map(classes[norm_name], nodes))
             return elements
 
         if name in self._allowed_parents:
-            ref = OCR_CLASSES[name]
-            node = self._element.find_parent(class_=ref['name'])
-            self._cache[name] = element = ref['class'](node)
+            node = self._element.find_parent(**soup_params[name])
+            self._cache[name] = element = classes[name](node)
             return element
 
         # Attribute is not present.
         raise AttributeError(name)
+
+    def __eq__(self, other):
+        return self._element == self._element
+
+
+class Document(Base):
+
+    def __init__(self, element):
+        if six.PY3:
+            super().__init__(element)
+        else:
+            super(Document, self).__init__(element)
 
 
 class Word(Base):
@@ -200,12 +225,3 @@ class Page(Base):
             super(Page, self).__init__(element)
 
     _dir_methods = ['image', ]
-
-
-OCR_CLASSES = {
-    'word': {'name': 'ocr.?_word', 'class': Word},
-    'line': {'name': 'ocr_line', 'class': Line},
-    'paragraph': {'name': 'ocr_par', 'class': Paragraph},
-    'block': {'name': 'ocr_carea', 'class': Block},
-    'page': {'name': 'ocr_page', 'class': Page},
-}

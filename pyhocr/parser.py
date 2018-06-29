@@ -1,11 +1,11 @@
 import six
 from bs4 import BeautifulSoup, UnicodeDammit
 
-from .page import Page
+from .classes import Document
 
 
 def parse(source):
-    """Parse a HOCR stream into page elements.
+    """Parse a HOCR stream into an Document object.
             @param[in] source
         Either a file-like object or a filename of the HOCR text.
     """
@@ -24,4 +24,4 @@ def parse(source):
     soup = BeautifulSoup(ud.unicode_markup, 'lxml')
 
     # Get all the pages and parse them into page elements.
-    return [Page(x) for x in soup.find_all(class_='ocr_page')]
+    return Document(soup.find('html'))

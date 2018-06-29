@@ -22,7 +22,9 @@ You can navigate through the hocr by asking for any children elements or any par
 ```python
 import pyhocr.parser
 filepath = 'example.hocr'
-page = pyhocr.parser.parse(stream)[0]
+hocr_document = pyhocr.parse(stream)
+# get the first page
+page = hocr_document.pages[0]
 # pulling all lines out:
 lines = page.lines
 # getting text of last line
