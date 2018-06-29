@@ -1,6 +1,5 @@
 from setuptools import find_packages
 from distutils.core import setup
-from pkgutil import get_importer
 
 __version__ = '1.1.1'
 
