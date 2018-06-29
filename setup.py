@@ -2,7 +2,6 @@ from setuptools import find_packages
 from distutils.core import setup
 from pkgutil import get_importer
 
-meta = get_importer('pyhocr').find_module('__init__').load_module('__init__')
 __version__ = '1.1.1'
 
 setup(
