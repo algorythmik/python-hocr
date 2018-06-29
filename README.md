@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/algorythmik/python-hocr.svg?branch=master)](https://travis-ci.com/algorythmik/python-hocr)
+
 # pyhocr
 
 pyhocr is a Python package to help you parse and navigate hocr files.
