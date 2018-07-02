@@ -1,7 +1,7 @@
 from setuptools import find_packages
 from distutils.core import setup
 
-__version__ = '1.1.1'
+__version__ = '2.0.0'
 
 setup(
     name='pyhocr',
