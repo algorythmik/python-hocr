@@ -5,7 +5,7 @@ from .classes import Document
 
 
 def parse(source):
-    """Parse a HOCR stream into an Document object.
+    """Parse a HOCR stream into a Document object.
             @param[in] source
         Either a file-like object or a filename of the HOCR text.
     """
