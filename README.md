@@ -26,10 +26,10 @@ You can navigate through the hocr by asking for any children elements or any par
 ```python
 import pyhocr.parser
 filepath = 'example.hocr'
-hocr = pyhocr.parse(stream)
+hocr_document = pyhocr.parse(stream)
 
 # get the first page
-page = hocr[0]
+page = hocr_document.pages[0]
 
 # pulling all lines out:
 lines = page.lines
