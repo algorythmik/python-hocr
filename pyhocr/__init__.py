@@ -27,4 +27,5 @@ def parse(source):
     soup = BeautifulSoup(ud.unicode_markup, 'lxml')
 
     # Get all the pages and parse them into page elements.
-    return Document(soup.find('html'))
+    html = soup.find('html')
+    return Document(html) if html else None
