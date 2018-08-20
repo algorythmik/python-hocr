@@ -28,4 +28,4 @@ def parse(source):
 
     # Get all the pages and parse them into page elements.
     html = soup.find('html')
-    return Document(html) if html else None
+    return Document(html)
