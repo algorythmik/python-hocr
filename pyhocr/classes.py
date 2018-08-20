@@ -222,3 +222,7 @@ class Page(Base):
             super(Page, self).__init__(element)
 
     _dir_methods = ['image', ]
+
+
+class HOCRParseError(ValueError):
+    pass
