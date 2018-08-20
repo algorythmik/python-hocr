@@ -15,8 +15,9 @@ def example():
 
 class TestParse:
 
-    def test_empty_file(self):
-        assert pyhocr.parse(path.join(BASE_DIR, 'empty_example.html')) is None
+    def test_empty_files_does_not_parse(self):
+        with pytest.raises(pyhocr.classes.HOCRParseError):
+            pyhocr.parse(path.join(BASE_DIR, 'empty_example.html'))
 
     def test_parse_from_stream(self, example):
         with open(path.join(BASE_DIR, 'example.html'), 'rb') as stream:

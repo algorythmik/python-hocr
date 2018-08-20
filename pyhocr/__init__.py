@@ -1,7 +1,7 @@
 import six
 from bs4 import BeautifulSoup, UnicodeDammit
 
-from .classes import Document
+from .classes import Document, HOCRParseError
 
 
 def parse(source):
@@ -28,4 +28,8 @@ def parse(source):
 
     # Get all the pages and parse them into page elements.
     html = soup.find('html')
-    return Document(html) if html else None
+
+    if html is None:
+        raise(HOCRParseError('No html tag was found!'))
+
+    return Document(html)
