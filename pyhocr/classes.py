@@ -133,7 +133,7 @@ class Base(object):
         raise AttributeError(name)
 
     def __eq__(self, other):
-        return self._element == self._element
+        return self._element == other._element
 
 
 class Document(Base):
