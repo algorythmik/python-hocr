@@ -24,9 +24,9 @@ and  returns them  as `Page`, `Blocks`, `Paragraphs`, `Lines`, and `Words` objec
 You can navigate through the hocr by asking for any children elements or any parent element. You can navigate down the structure like:
 
 ```python
-import pyhocr.parser
+import pyhocr
 filepath = 'example.hocr'
-hocr_document = pyhocr.parse(stream)
+hocr_document = pyhocr.parse(filepath)
 
 # get the first page
 page = hocr_document.pages[0]
