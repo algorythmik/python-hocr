@@ -164,8 +164,12 @@ class TestBbox:
         word = example.pages[0].words[0]
         assert word.bbox.left == 2216
         assert word.bbox.top == 1049
-        assert word.bbox.right == 2249
+        assert word.bbox.right == 2449
         assert word.bbox.bottom == 1098
         assert word.bbox.coords == (2216, 1049, 2449, 1098)
         assert word.bbox.height == 49
         assert word.bbox.width == 233
+
+    def test_repr(self, example):
+        word = example.pages[0].words[0]
+        assert str(word.bbox) == "<Box(2216, 1049, 2449, 1098)>"
