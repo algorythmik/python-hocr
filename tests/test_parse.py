@@ -53,6 +53,7 @@ class TestPage:
     def test_page_bounding_box_has_correct_value(self, example):
         page = example.pages[0]
 
+        assert page.bbox.coords == (0, 0, 5100, 6600)
         assert page.bbox.left == 0
         assert page.bbox.top == 0
         assert page.bbox.right == 5100

@@ -24,7 +24,7 @@ class BBox(object):
 
     @property
     def coords(self):
-        return self.top, self.left, self.right, self.bottom
+        return self.left, self.top, self.right, self.bottom
 
     def __repr__(self):
         return '<Box(%r, %r, %r, %r)>' % (
