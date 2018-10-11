@@ -50,15 +50,6 @@ class TestPage:
         for page in example.pages:
             assert page.bbox.left >= 0
 
-    def test_page_bounding_box_has_correct_value(self, example):
-        page = example.pages[0]
-
-        assert page.bbox.coords == (0, 0, 5100, 6600)
-        assert page.bbox.left == 0
-        assert page.bbox.top == 0
-        assert page.bbox.right == 5100
-        assert page.bbox.bottom == 6600
-
     def test_page_has_image_name(self, example):
         page = example.pages[0]
 
@@ -166,3 +157,15 @@ class TestWord:
         page = example.pages[0]
         for word in page.words:
             assert isinstance(word.page, pyhocr.classes.Page)
+
+
+class TestBbox:
+    def test_bbox_has_correct_values(self, example):
+        word = example.pages[0].words[0]
+        assert word.bbox.left == 2216
+        assert word.bbox.top == 1049
+        assert word.bbox.right == 2249
+        assert word.bbox.bottom == 1098
+        assert word.bbox.coords == (2216, 1049, 2449, 1098)
+        assert word.bbox.height == 49
+        assert word.bbox.width == 233
