@@ -2,7 +2,7 @@
 
 # pyhocr
 
-pyhocr is a Python package to help you parse and navigate hocr files.
+pyhocr is a Python package to help you parse and navigate hocr documents.
 
 ## Installation
 
@@ -25,8 +25,10 @@ You can navigate through the hocr by asking for any children elements or any par
 
 ```python
 import pyhocr
-filepath = 'example.hocr'
-hocr_document = pyhocr.parse(filepath)
+
+with open('example.hocr') as f:
+    hocr_string = f.read()
+hocr_document = pyhocr.parse(hocr_string)
 
 # get the first page
 page = hocr_document.pages[0]
