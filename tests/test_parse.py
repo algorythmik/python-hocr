@@ -9,21 +9,20 @@ BASE_DIR = path.dirname(__file__)
 
 @pytest.fixture(scope='session')
 def example():
-    filename = 'example.html'
-    return pyhocr.parse(path.join(BASE_DIR, filename))
+    with open(path.join(BASE_DIR, 'example.html')) as f:
+        return pyhocr.parse(f.read())
 
 
 class TestParse:
 
-    def test_empty_files_does_not_parse(self):
+    def test_parses_from_string(self):
+        with open(path.join(BASE_DIR, 'example.html'), 'r') as f:
+            hocr_string = f.read()
+        assert pyhocr.parse(hocr_string)
+
+    def test_empty_strings_does_not_parse(self):
         with pytest.raises(pyhocr.classes.HOCRParseError):
-            pyhocr.parse(path.join(BASE_DIR, 'empty_example.html'))
-
-    def test_parse_from_stream(self, example):
-        with open(path.join(BASE_DIR, 'example.html'), 'rb') as stream:
-            hocr = pyhocr.parse(stream)
-
-            assert hocr == example
+            pyhocr.parse('')
 
     def test_get_number_of_pages(self, example):
         assert len(example.pages) == 1
