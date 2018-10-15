@@ -28,6 +28,7 @@ import pyhocr
 
 with open('example.hocr') as f:
     hocr_string = f.read()
+
 hocr_document = pyhocr.parse(hocr_string)
 
 # get the first page
