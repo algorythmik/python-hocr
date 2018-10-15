@@ -16,9 +16,7 @@ def example():
 class TestParse:
 
     def test_parses_from_string(self):
-        with open(path.join(BASE_DIR, 'example.html'), 'r') as f:
-            hocr_string = f.read()
-        assert pyhocr.parse(hocr_string)
+        assert pyhocr.parse('<html></html>')
 
     def test_empty_strings_does_not_parse(self):
         with pytest.raises(pyhocr.classes.HOCRParseError):
