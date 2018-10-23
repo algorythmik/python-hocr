@@ -74,6 +74,9 @@ class Base(object):
             elif name == 'x_wconf':
                 self.wconf = int(value)
 
+            elif name == 'x_font':
+                self.font = value.strip('" ')
+
             elif name == 'textangle':
                 self.textangle = int(value)
                 if value == '90':
@@ -148,7 +151,7 @@ class Document(Base):
 
 class Word(Base):
     soup_params = {'class_': 'ocrx_word'}
-    _dir_methods = ['bbox', 'bold', 'italic', 'lang', 'wconf']
+    _dir_methods = ['bbox', 'bold', 'italic', 'lang', 'wconf', 'font']
 
     def __init__(self, element):
         # Initialize the base.
