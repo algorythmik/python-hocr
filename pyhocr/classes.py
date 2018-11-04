@@ -138,6 +138,10 @@ class Base(object):
     def __eq__(self, other):
         return self._element == other._element
 
+    @property
+    def text(self):
+        return self._element.text
+
 
 class Document(Base):
     soup_params = {'name': 'html'}
@@ -166,10 +170,6 @@ class Word(Base):
         # Discover if we are "italic".
         # A word element is italic if its text node is wrapped in a <em/>.
         self.italic = bool(element.find('em'))
-
-        # Find the text node.
-        self.text = element.text
-
         self.lang = element.get("lang", '')
 
     def __str__(self):
@@ -187,10 +187,6 @@ class Line(Base):
             super().__init__(element)
         else:
             super(Line, self).__init__(element)
-
-    @property
-    def text(self):
-        return ' '.join([w.text for w in self.words])
 
 
 class Paragraph(Base):

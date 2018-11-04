@@ -92,12 +92,20 @@ class TestBlock:
         for block in page.blocks:
             assert isinstance(block.page, pyhocr.classes.Page)
 
+    def test_block_has_text(self, example):
+        block = example.blocks[0]
+        assert block.text == '\n\nTABLE OF CONTENTS\n\n\n'
+
 
 class TestLines:
     def test_line_has_block(self, example):
         page = example.pages[0]
         for line in page.lines:
             assert isinstance(line.block, pyhocr.classes.Block)
+
+    def test_line_has_text(self, example):
+        line = example.lines[0]
+        assert line.text == 'TABLE OF CONTENTS\n'
 
 
 class TestWord:
